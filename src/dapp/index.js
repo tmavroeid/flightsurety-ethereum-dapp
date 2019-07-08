@@ -36,13 +36,14 @@ import './flightsurety.css';
         });
 
 
-        contract.flightSuretyApp.methods.getExistingAirlines().call({ from: contract.owner}, (error, result) => {
+        contract.flightSuretyApp.methods.getExistingAirlines().call({ from: contract.account}, (error, result) => {
             console.log('edw'+result);
             //populateRegisteredAirlines(contract.airlines,result,'registeredairline');
             //populateRegisteredAirlines(contract.airlines,result,'insuredairline');
             populateRegisteredAirlines(result,'fundingairline');
+
             //populateRegisteredAirlines(contract.airlines,result,'statusairline');
-            initialize(contract.flights,contract.airlines);
+            //initialize(contract.flights,contract.airlines);
             //populateAirlines(contract.airlines,result,'airlineaddress');
 
           //populate airline funding
@@ -56,25 +57,38 @@ import './flightsurety.css';
             // })
 
         })
+        contract.flightSuretyApp.methods.getAirlinesFunded().call((error, result) => {
+            console.log('edw funded'+result);
+            //populateRegisteredAirlines(contract.airlines,result,'registeredairline');
+            //populateRegisteredAirlines(contract.airlines,result,'insuredairline');
+            populateFundedAirlines(result,'fundedairlines');
+            populateFundedAirlines(result,'airline');
+            populateFundedAirlines(result, 'withdrawingfromairline');
+            populateFundedAirlines(result,'statusairline');
+            //populateRegisteredAirlines(contract.airlines,result,'statusairline');
+            //initialize(contract.flights,contract.airlines);
 
+
+        })
         // contract.flightSuretyApp.methods.getExistingFlights().call({ from: contract.owner}, (error, result) => {
         //     console.log('edw'+result);
         //
         // })
 
-        populatePassengerList(contract.passengers,'insuredpassengers');
-        populatePassengerList(contract.passengers,'passengers');
+        //populatePassengerList(contract.passengers,'insuredpassengers');
+        //populatePassengerList(contract.passengers,'passengers');
         //populates all the airlines in the airline to register dropdown
         //populate insured funds
-        let passenger = DOM.elid('insuredpassengers').value;
-        contract.getBalance(passenger, (error, result) => {
-            if(!error)
-            {
-                const funds = contract.web3.utils.fromWei(result, 'ether');
-                populateBalance(funds);
-            }
-
-        });
+        //let passenger = DOM.elid('insuredpassengers').value;
+        // let passenger = contract.account;
+        // contract.getBalance(passenger, (error, result) => {
+        //     if(!error)
+        //     {
+        //         const funds = contract.web3.utils.fromWei(result, 'ether');
+        //         populateBalance(funds);
+        //     }
+        //
+        // });
 
         DOM.elid('register-Airline').addEventListener('click', () => {
             let name = DOM.elid('airlinename').value;
@@ -82,7 +96,7 @@ import './flightsurety.css';
             console.log("Airline Name:" + name);
             //let fromairline = x.options[x.selectedIndex].value;
             console.log("Airline Address:" + address);
-            contract.registerAirline(name,address,{ from: contract.owner},(error,result) => {
+            contract.registerAirline(name,address,{ from: contract.account},(error,result) => {
 
                 if(error){
                     display('Airlines', 'Register Airline', [ { label: 'Register Airline', error: error, value: result } ]);
@@ -90,18 +104,6 @@ import './flightsurety.css';
                 if(!error){
                     display('Airlines', 'Register Airline', [ { label: 'Register Airline', error: error, value: result } ]);
 
-                    contract.flightSuretyApp.methods.getExistingAirlines().call({ from: contract.owner}, (error, result) => {
-                        console.log("owner="+contract.owner);
-                        console.log(result);
-                        //populateRegisteredAirlines(contract.airlines,result,'registeredairline');
-                        // populateRegisteredAirlines(contract.airlines,result,'insuredairline');
-                        // populateRegisteredAirlines(contract.airlines,result,'fundingairline');
-                        // populateRegisteredAirlines(contract.airlines,result,'statusairline');
-                        // populateAirlines(contract.airlines,result,'airlineaddress');
-                        initialize(contract.flights,contract.airlines);
-                        initializeStatus(contract.flights,contract.airlines);
-
-                    })
                   }
             })
         });
@@ -123,92 +125,147 @@ import './flightsurety.css';
             let funds_ether = DOM.elid('airlineFunds').value;
             let fundingairline = DOM.elid('fundingairline').value;
 
-            // Write transaction
-            // contract.sendFunds(fundingairline,funds_ether, (error, result) => {
-            //     //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result + ' ' + result.args.flight + ' ' + result.args.timestamp} ]);
-            //     display('Airline Funding', 'Send Funds', [ { label: 'Send Funds', error: error, value: result } ]);
-            //     if(!error){
-            //         contract.flightSuretyApp.methods.getAirlineFunds(fundingairline.toString()).call({ from: contract.owner}, (error, result) => {
-            //             console.log(result);
-            //             const funds_ether = contract.web3.utils.fromWei(result, 'ether');
-            //             populateFunding(funds_ether);
-            //
-            //         })
-            //     }
-            // });
-            console.log(contract.account);
             if(contract.account == fundingairline){
               const funds = contract.web3.utils.toWei(funds_ether, 'ether');
-              contract.flightSuretyApp.methods.fundingAirline().call({from:fundingairline, value:funds});
+              contract.fundingAirline(fundingairline, funds,(error,result) => {
+
+                  if(error){
+                      display('Airlines', 'Fund Airline', [ { label: 'Fund Airline', error: error, value: result } ]);
+                  }
+                  if(!error){
+                      display('Airlines', 'Funded Airline', [ { label: 'Funded Airline', error: error, value: result } ]);
+
+                      contract.flightSuretyApp.methods.getAirlinesFunded().call((error, result) => {
+                          if(error){
+                            console.log(error);
+                          }else{
+
+                            console.log('edw funded'+result);
+                            populateFundedAirlines(result,'fundedairlines');
+                            populateFundedAirlines(result, 'airline');
+                            populateFundedAirlines(result, 'withdrawingfromairline');
+                            populateFundedAirlines(result,'statusairline');
+                          }
+                      })
+                    }
+                  });
               console.log('fund SKATA');
+            }else{
+              display('You dont have permission for this operation.');
+            }
+        })
+
+        DOM.elid('register-flight').addEventListener('click', () => {
+            let airline = DOM.elid('fundedairlines').value;
+            let flightname = DOM.elid('flightname').value;
+            let takeofftimestamp = DOM.elid('takeofftimestamp').value;
+            let destination = DOM.elid('destination').value;
+            let arrival = DOM.elid('arrival').value;
+            let ticketprice = DOM.elid('ticketprice').value;
+            //var d = new Date($("takeofftimestamp").val());
+            var takeoff = Date.parse(takeofftimestamp);
+            var landing = Date.parse(arrival);
+
+            if(contract.account == airline){
+
+              contract.registerFlight(airline, flightname, takeoff, destination, landing, ticketprice, (error,result) => {
+
+                  if(error){
+                      display('Flights', 'Register Flight', [ { label: 'Register Flight', error: error, value: result } ]);
+                  }
+                  if(!error){
+                      display('Flights', 'Register Flight', [ { label: 'Register Flight', error: error, value: result } ]);
+                    }
+                  });
+              console.log('register flight SKATA');
+            }else{
+              display('You dont have permission for this operation.');
             }
         })
 
           // purchase insurance for flight
           DOM.elid('purchase-insurance').addEventListener('click', () => {
-            let airline = DOM.elid('insuredairline').value;
-            let flight = DOM.elid('insflight-number').value;
-            let funds_ether = DOM.elid('fundinsurance').value;
-            let passenger = DOM.elid('passengers').value;
-            let ts = DOM.elid('datepicker').value;
-            console.log("ts:" + ts);
+            let airline = DOM.elid('airline').value;
+            let flight = DOM.elid('flight-name').value;
+            let ts = DOM.elid('take-off-timestamp').value;
+            let funds = DOM.elid('fundsforinsurance').value;
+
+            let takeofftimestamp = Date.parse(ts);
+
+            console.log("takeofftimestamp:" + takeofftimestamp);
             let timestamp = new Date(ts).getTime()/1000;
             console.log("timestamp:" + timestamp);
             // Write transaction
-            contract.purchaseInsurance(airline,flight,passenger,funds_ether,timestamp, (error, result) => {
+            const fee = contract.web3.utils.toWei(funds, 'ether');
 
-                display('Insurance', 'Purchase Insurance', [ { label: 'Purchase Insurance', error: error, value: result } ]);
+            contract.purchaseInsurance(airline,flight,takeofftimestamp,fee, (error, result) => {
+              if(error){
+                  display('Insurance', 'Purchase Insurance', [ { label: 'Purchase Insurance', error: error, value: result } ]);
+              }
+              if(!error){
+                  display('Insurance', 'Purchase Insurance', [ { label: 'Purchase Insurance', error: error, value: result } ]);
+                }
             });
         })
         // withdraw balance for flight
         DOM.elid('withdraw-funds').addEventListener('click', () => {
-            let funds = DOM.elid('withdrawamount').value;
-            let passenger = DOM.elid('insuredpassengers').value;
+            let airline = DOM.elid('withdrawingfromairline').value;
+            let flight = DOM.elid('flightName').value;
+            let ts = DOM.elid('take-off').value;
+
+            let takeofftimestamp = Date.parse(ts);
+
             //let funds_ether = DOM.elid('fundinsurance').value;
             // Write transaction
-            contract.withdrawFunds(passenger,funds, (error, result) => {
+            contract.withdrawFunds(airline,flight,takeofftimestamp, (error, result) => {
+              if(error){
+                  display('Withdraw', 'Withdraw Funds', [ { label: 'Withdraw Funds', error: error, value: result } ]);
+              }
+              if(!error){
+                  display('Withdraw', 'Withdraw Funds', [ { label: 'Withdraw Funds', error: error, value: result } ]);
+                }
 
-                display('Withdraw', 'Withdraw Funds', [ { label: 'Withdraw Funds', error: error, value: result } ]);
-                let passenger = DOM.elid('insuredpassengers').value;
-                contract.getBalance(passenger, (error, result) => {
-                    if(!error)
-                    {
-                        const funds = contract.web3.utils.fromWei(result, 'ether');
-                        populateBalance(funds);
-                    }
+                //let passenger = DOM.elid('insuredpassengers').value;
 
-                });
+                // contract.getBalance(passenger, (error, result) => {
+                //     if(!error)
+                //     {
+                //         const funds = contract.web3.utils.fromWei(result, 'ether');
+                //         populateBalance(funds);
+                //     }
+                //
+                // });
             });
         })
 
-        DOM.elid('insuredpassengers').addEventListener('change', () => {
-            let passenger = DOM.elid('insuredpassengers').value;
+        // DOM.elid('insuredpassengers').addEventListener('change', () => {
+        //     //let passenger = DOM.elid('insuredpassengers').value;
+        //     let passenger = contract.account
+        //     contract.getBalance(passenger, (error, result) => {
+        //         if(error)
+        //         {
+        //             display('Withdraw', 'Withdraw funds', [ { label: 'Get Balance', error: error, value: result } ]);
+        //             populateBalance(0);
+        //         }
+        //         else
+        //         {
+        //             const funds = contract.web3.utils.fromWei(result, 'ether');
+        //             populateBalance(funds);
+        //         }
+        //
+        //     }).catch(error=>{
+        //       console.log(error);
+        //     });
+        // })
 
-            contract.getBalance(passenger, (error, result) => {
-                if(error)
-                {
-                    display('Withdraw', 'Withdraw funds', [ { label: 'Get Balance', error: error, value: result } ]);
-                    populateBalance(0);
-                }
-                else
-                {
-                    const funds = contract.web3.utils.fromWei(result, 'ether');
-                    populateBalance(funds);
-                }
-
-            }).catch(error=>{
-              console.log(error);
-            });
-        })
-
-        DOM.elid('insuredairline').addEventListener('change', () => {
-            let airline = DOM.elid('insuredairline').value;
-           // console.log("test airline" + airline);
-            let airlineName = contract.airlines[airline]
-            let flights = contract.flights[airlineName];
-            //populateFlights(flights,'insflight-number');
-
-        })
+        // DOM.elid('insuredairline').addEventListener('change', () => {
+        //     let airline = DOM.elid('insuredairline').value;
+        //    // console.log("test airline" + airline);
+        //     let airlineName = contract.airlines[airline]
+        //     let flights = contract.flights[airlineName];
+        //     //populateFlights(flights,'insflight-number');
+        //
+        // })
         DOM.elid('statusairline').addEventListener('change', () => {
             let airline = DOM.elid('statusairline').value;
             let airlineName = contract.airlines[airline]
@@ -222,14 +279,21 @@ import './flightsurety.css';
 
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
-            let flight = DOM.elid('flight-number').value;
+            let flight = DOM.elid('flight').value;
             let airline = DOM.elid('statusairline').value;
-            let ts = DOM.elid('statusdatepicker').value;
+            let ts = DOM.elid('statustakeofftimestamp').value;
+            let takeofftimestamp = Date.parse(ts);
+
             let timestamp = new Date(ts).getTime()/1000;
             // Write transaction
-            contract.fetchFlightStatus(airline,flight,timestamp, (error, result) => {
+            contract.fetchFlightStatus(airline,flight,takeofftimestamp, (error, result) => {
                 //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result + ' ' + result.args.flight + ' ' + result.args.timestamp} ]);
-                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result } ]);
+                if(error){
+                    display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result } ]);
+                }
+                if(!error){
+                    display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result } ]);
+                  }
 
 
             });
@@ -298,19 +362,19 @@ function populateBalance(balance)
      console.log("balance :"+ balance);
 }
 
-function populatePassengerList(passengers,elid){
-    var list = document.getElementById(elid);
-    list.innerHTML = "";
-
-    Object.keys(passengers).forEach(function(key) {
-
-        var option = document.createElement("option");
-        option.text = passengers[key];
-        option.value = key;
-        list.add(option);
-    });
-
-}
+// function populatePassengerList(passengers,elid){
+//     var list = document.getElementById(elid);
+//     list.innerHTML = "";
+//
+//     Object.keys(passengers).forEach(function(key) {
+//
+//         var option = document.createElement("option");
+//         option.text = passengers[key];
+//         option.value = key;
+//         list.add(option);
+//     });
+//
+// }
 
 function populateFunding(funds){
     var fund = document.getElementById("funds");
@@ -322,6 +386,19 @@ function populateRegisteredAirlines(registeredAirlines,fundingairline){
     var list = document.getElementById(fundingairline);
     //list.innerHTML = "";
     registeredAirlines.forEach((airline)=>{
+        var option = document.createElement("option");
+        //var airlineName = airlines[airline];
+        option.value = airline;
+        option.text = airline;
+        list.add(option);
+
+    })
+}
+
+function populateFundedAirlines(fundedAirlines,fundedairlines){
+    var list = document.getElementById(fundedairlines);
+    //list.innerHTML = "";
+    fundedAirlines.forEach((airline)=>{
         var option = document.createElement("option");
         //var airlineName = airlines[airline];
         option.value = airline;

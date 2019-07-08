@@ -60,6 +60,12 @@ contract('Flight Surety Tests', async (accounts) => {
     assert.equal(+balanceBefore + expectedRegistrationFee, +balanceAfter, 'Error: 10 ETH should have been transfered');
   });
 
+  it('(airline) First Airline is funded', async () => {
+    const result = await config.flightSuretyApp.getAirlinesFunded.call();
+    assert.equal(result, config.firstAirline, "There is not an airline funded");
+
+  });
+
   it('(airline) Airline can register another Airline using registerAirline() (when multi-party is not reached)', async () => {
 
     // ARRANGE

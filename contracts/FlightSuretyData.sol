@@ -20,7 +20,7 @@ contract FlightSuretyData {
     uint256 public constant REGISTRATION_FUND = 10 ether;
     uint8 public numFundedAirlines;
     mapping(address => bool) private fundedAirlines;
-
+    address[] public alreadyFundedAirlines;
 
     struct Flight {
         bool isRegistered;
@@ -33,6 +33,7 @@ contract FlightSuretyData {
         uint ticketprice;
     }
     mapping(bytes32 => Flight) public flights;
+    string[] public availableFlights;
 
 //this will track insurance for each passenger
   /*    struct PassengerInsurance {
@@ -337,6 +338,7 @@ contract FlightSuretyData {
     {
         bytes32 _flightkey = getFlightKey(_airline,_flightName,_takeoffTimestamp);
         flights[_flightkey] = Flight({isRegistered: true, statusCode: 0, takeoffTimestamp: _takeoffTimestamp, airline: _airline, name: _flightName, destination: _destination, arrival: _arrival, ticketprice: _ticketprice});
+        availableFlights.push(_flightName);
         return _flightkey;
     }
 
@@ -350,13 +352,20 @@ contract FlightSuretyData {
         return airlines;
     }
 
+    function getFundedAirlines()
+                external
+                view
+                returns(address[] memory)
+    {
+      return alreadyFundedAirlines;
+    }
+
+
 
     function getPassengerFunds(address passenger)
                 external
                 view
                 returns(uint)
-
-
     {
 
         return accountBalance[passenger];
@@ -398,10 +407,12 @@ contract FlightSuretyData {
                              payable
                              requireIsOperational
                              requireIsCallerAuthorized
+                             returns(bool)
      {
          fundedAirlines[_airlineAddress] = true;
          numFundedAirlines++;
-         //return true;
+         alreadyFundedAirlines.push(_airlineAddress);
+         return fundedAirlines[_airlineAddress];
      }
 
 

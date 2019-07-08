@@ -52,7 +52,7 @@
                 <select class="form-control" id="fundingairline">
                 </select>
                 <!-- <input type="text" class="form-control mb-2 mr-sm-1" id="fundingairline"> -->
-                <label for="airlineFunds" class="mr-sm-2">Funds(ether)</label> <input type="text" class="form-control mb-2 mr-sm-2" id="airlineFunds">
+                <label for="airlineFunds" class="mr-sm-2">Add Funds(Ether)</label> <input type="text" class="form-control mb-2 mr-sm-2" id="airlineFunds">
                 <!-- <label for="funds" class="mr-sm-2">Balance(ether)</label> <input type="text" readonly class="form-control mb-2 mr-sm-1" id="funds"> -->
                 <btn class="btn btn-primary" id="fund-airline">Add Fund</btn>
   </form>
@@ -64,52 +64,78 @@
               <label for="fundedairlines" class="mr-sm-2">Choose Airline</label>
               <select class="form-control" id="fundedairlines">
               </select>
+              <label for="flightname" class="mr-sm-2">Flight Name:</label> <input type="text" class="form-control mb-2 mr-sm-2" id="flightname">
+
+                  <label for="takeofftimestamp" class="mr-sm-2">Take Off Date:</label>
+                      <div  style="background-color: white">
+                      <input id="takeofftimestamp" class="form-control" width="276" />
+                      </div>
+                      <script>
+                           $('#takeofftimestamp').datepicker({
+                           uiLibrary: 'bootstrap4'
+                           });
+                      </script>
+              <label for="destination" class="mr-sm-2"></label>Destination:<input type="text" class="form-control mb-2 mr-sm-2" id="destination">
+              <label for="arrival" class="mr-sm-2">Arrival:</label>
+                  <div  style="background-color: white">
+                  <input id="arrival" class="form-control" width="276" />
+                  </div>
+                  <script>
+                       $('#arrival').datepicker({
+                       uiLibrary: 'bootstrap4'
+                       });
+                  </script>
+              <label for="ticketprice" class="mr-sm-2"></label>Ticketprice (Ether):<input type="text" class="form-control mb-2 mr-sm-2" id="ticketprice">
+
+
               <!-- <input type="text" class="form-control mb-2 mr-sm-1" id="fundingairline"> -->
-              <label for="airlineFunds" class="mr-sm-2">Funds(ether)</label> <input type="text" class="form-control mb-2 mr-sm-2" id="airlineFunds">
+              <!-- <label for="airlineFunds" class="mr-sm-2">Funds(ether)</label> <input type="text" class="form-control mb-2 mr-sm-2" id="airlineFunds"> -->
               <!-- <label for="funds" class="mr-sm-2">Balance(ether)</label> <input type="text" readonly class="form-control mb-2 mr-sm-1" id="funds"> -->
-              <btn class="btn btn-primary" id="fund-airline">Add Fund</btn>
+              <btn class="btn btn-primary" id="register-flight">Register Flight</btn>
 </form>
 </div>
 <div style="border:1px solid white" class="mb-2">
   <h4>Purchase Insurance</h4>
         <form class="form-inline mb-2" >
-                <label for="passengers" class="mr-sm-2">Passenger</label>
-                    <select class="form-control" id="passengers">
-                    </select>
-                <label for="insuredairline" class="mr-sm-2">Airline</label>
-                <select class="form-control" id="insuredairline">
+                <label for="airline" class="mr-sm-2">Choose Airline</label>
+                <select class="form-control" id="airline">
                 </select>
-                <!-- <input type="text" class="form-control mb-2 mr-sm-1" id="insuredairline"> -->
-                <label for="insflight-number" class="mr-sm-2">Flight</label>
-                <select class="form-control" id="insflight-number">
-                    <option>A234</option>
-                    <option>A236</option>
-                    <option>A237</option>
-                </select>
-                <label for="datepicker" class="mr-sm-2">Date:</label>
+                    <!-- <select class="form-control" id="passengers">
+                    </select> -->
+                <label for="flight-name" class="mr-sm-2"></label>Flight Name:<input type="text" class="form-control mb-2 mr-sm-2" id="flight-name">
+                <label for="take-off-timestamp" class="mr-sm-2">Take Off Date:</label>
                     <div  style="background-color: white">
-                    <input id="datepicker" class="form-control" width="276" />
+                    <input id="take-off-timestamp" class="form-control" width="276" />
                     </div>
                     <script>
-                         $('#datepicker').datepicker({
+                         $('#take-off-timestamp').datepicker({
                          uiLibrary: 'bootstrap4'
                          });
                     </script>
                 <!-- <input type="text" class="form-control mb-2 mr-sm-1" id="insflight-number"> -->
-                <label for="fundinsurance" class="mr-sm-2">Add Funds(ether) </label> <input type="text" class="form-control mb-2 mr-sm-1" id="fundinsurance">
+                <label for="fundsforinsurance" class="mr-sm-2">Add Fee (< 1 Ether):</label> <input type="text" class="form-control mb-2 mr-sm-1" id="fundsforinsurance">
                 <btn class="btn btn-primary" id="purchase-insurance">Purchase Insurance</btn>
         </form>
 </div>
 <div style="border:1px solid white" class="mb-2">
         <h4>Withdraw</h4>
               <form class="form-inline mb-2" >
-                    <label for="insuredpassengers" class="mr-sm-2">Passenger</label>
-                    <select class="form-control" id="insuredpassengers">
-                    </select>
-                      <label for="balanceamount" class="mr-sm-2">Balance(ether)</label>
-                      <input type="text" readonly class="form-control mb-2 mr-sm-3" id="balanceamount">
-                      <!-- <input type="text" class="form-control mb-2 mr-sm-1" id="insuredairline"> -->
-                      <label for="withdrawamount" class="mr-sm-2">Withdraw(ether)</label> <input type="text" class="form-control mb-2 mr-sm-3" id="withdrawamount">
+                <label for="withdrawingfromairline" class="mr-sm-2">Choose Airline</label>
+                <select class="form-control" id="withdrawingfromairline">
+                </select>
+                    <!-- <select class="form-control" id="passengers">
+                    </select> -->
+                <label for="flightName" class="mr-sm-2"></label>Flight Name:<input type="text" class="form-control mb-2 mr-sm-2" id="flightName">
+                <label for="take-off" class="mr-sm-2">Take Off Date:</label>
+                    <div  style="background-color: white">
+                    <input id="take-off" class="form-control" width="276" />
+                    </div>
+                    <script>
+                         $('#take-off').datepicker({
+                         uiLibrary: 'bootstrap4'
+                         });
+                    </script>
+
 
                       <btn class="btn btn-primary" id="withdraw-funds">Withdraw Funds</btn>
               </form>
@@ -120,26 +146,22 @@
             <form class="form-inline mb-2" >
 
 
-                    <label for="statusairline" class="mr-sm-2">Airline</label>
-                    <select class="form-control" id="statusairline">
-                    </select>
-                    <!-- <input type="text" class="form-control mb-2 mr-sm-1" id="insuredairline"> -->
-                    <label for="flight-number" class="mr-sm-2">Flight</label>
-                    <select class="form-control" id="flight-number">
-                        <option>A234</option>
-                        <option>A236</option>
-                        <option>A237</option>
-                    </select>
-                    <label class="mr-sm-2">Date:</label>
-                    <div style="background-color: white">
-
-                    <input id="statusdatepicker" class="form-control" width="276" />
-                    </div>
-                    <script>
-                         $('#statusdatepicker').datepicker({
-                         uiLibrary: 'bootstrap4'
-                         });
-                    </script>
+              <form class="form-inline mb-2" >
+              <label for="statusairline" class="mr-sm-2">Choose Airline</label>
+              <select class="form-control" id="statusairline">
+              </select>
+                  <!-- <select class="form-control" id="passengers">
+                  </select> -->
+              <label for="flight" class="mr-sm-2"></label>Flight Name:<input type="text" class="form-control mb-2 mr-sm-2" id="flight">
+              <label for="statustakeofftimestamp" class="mr-sm-2">Take Off Date:</label>
+                  <div  style="background-color: white">
+                  <input id="statustakeofftimestamp" class="form-control" width="276" />
+                  </div>
+                  <script>
+                       $('#statustakeofftimestamp').datepicker({
+                       uiLibrary: 'bootstrap4'
+                       });
+                  </script>
 
 
 

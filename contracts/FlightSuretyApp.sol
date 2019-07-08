@@ -193,6 +193,7 @@ contract FlightSuretyApp {
         require(msg.value >= MIN_FUNDING_AMOUNT, "Minimun funding amount is 10 ETH");
         _;
     }
+
     /* do not process a flight more than once,
         which could e.g result in the passengers being credited their insurance amount twice.
         */
@@ -242,6 +243,7 @@ contract FlightSuretyApp {
     function getfunded()public view returns(uint8){
       return flightSuretyData.numOfFundedAirlines();
     }
+
 
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
@@ -315,11 +317,13 @@ contract FlightSuretyApp {
     requireIsOperational
     adequateFunding
     requireIsAirlineRegistered(msg.sender)
+    returns(bool)
     {
         // Transfer Fund to Data Contract
         //address(flightContractData).transfer(msg.value);
         //flightSuretyData.fund(msg.sender,msg.value);
-        flightSuretyData.fund.value(msg.value)(msg.sender);
+        return flightSuretyData.fund.value(msg.value)(msg.sender);
+
     }
 
 
@@ -399,8 +403,8 @@ contract FlightSuretyApp {
     {
        // address[] memory insurees = _flightSuretyData.getInsurees(airline, flight, timestamp);
        // generate flightKey
-       bytes32 flightKey = getFlightKey(airline, flightName, takeoffTimestamp);
-       uint8 code = flightSuretyData.getFlightStatusCode(flightKey);
+       //bytes32 flightKey = getFlightKey(airline, flightName, takeoffTimestamp);
+       //uint8 code = flightSuretyData.getFlightStatusCode(flightKey);
        //require(code == 0, "This flight has already been processed");
        flightSuretyData.creditInsurees(airline, flightName, takeoffTimestamp, 15, 10);
        emit FlightProcessed(flightName, takeoffTimestamp, statusCode);
@@ -464,18 +468,33 @@ contract FlightSuretyApp {
         emit OracleRequest(index, airline, flightName, takeoffTimestamp, oracleResponses[key].isOpen, key);
     }
 
-    // function getMyIndexes
-    //                         (
-    //                         )
-    //                         view
-    //                         external
-    //                         requireIsOperational
-    //                         returns(uint8[3] memory)
-    // {
-    //     require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
-    //
-    //     return oracles[msg.sender].indexes;
-    // }
+    // function fetchFlight
+    //               (
+    //                   address airline,
+    //                   string calldata flightName,
+    //                   uint256 takeoffTimestamp
+    //               )
+    //               external
+    //               requireIsOperational
+    //               requireIsAirlineRegistered(airline)
+    //               returns(bytes32)
+    //   {
+    //     bytes32 flightKey = getFlightKey(airline, flightName, takeoffTimestamp);
+    //     //flightSuretyData.setStatusCodeOnFlight(flightKey, statusCode);
+    //     return flightKey;
+    //   }
+    function getMyIndexes
+                            (
+                            )
+                            view
+                            external
+                            requireIsOperational
+                            returns(uint8[3] memory)
+    {
+        require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
+
+        return oracles[msg.sender].indexes;
+    }
 
 
 
@@ -484,25 +503,25 @@ contract FlightSuretyApp {
     // For the response to be accepted, there must be a pending request that is open
     // and matches one of the three Indexes randomly assigned to the oracle at the
     // time of registration (i.e. uninvited oracles are not welcome)
-    event isKey(bytes32 key);
-
-
-
-    function getKey
-                        (
-                            uint8 index,
-                            address airline,
-                            string calldata flightName,
-                            uint256 takeoffTimestamp
-                        )
-                        external
-                        requireIsOperational
-
-    {
-      bytes32 key = keccak256(abi.encodePacked(index, airline, flightName, takeoffTimestamp));
-
-      emit isKey(key);
-    }
+    // event isKey(bytes32 key);
+    //
+    //
+    //
+    // function getKey
+    //                     (
+    //                         uint8 index,
+    //                         address airline,
+    //                         string calldata flightName,
+    //                         uint256 takeoffTimestamp
+    //                     )
+    //                     external
+    //                     requireIsOperational
+    //
+    // {
+    //   bytes32 key = keccak256(abi.encodePacked(index, airline, flightName, takeoffTimestamp));
+    //
+    //   emit isKey(key);
+    // }
 
 
     function submitOracleResponse
@@ -550,22 +569,22 @@ contract FlightSuretyApp {
 
     }
 
-    function getIsOpen
-              (
-                  uint8 index,
-                  address airline,
-                  string calldata flightName,
-                  uint256 takeoffTimestamp
-              )
-              external
-              view
-              returns(bool)
-              {
-
-              bytes32 key = keccak256(abi.encodePacked(index, airline, flightName, takeoffTimestamp));
-
-              return oracleResponses[key].isOpen;
-            }
+    // function getIsOpen
+    //           (
+    //               uint8 index,
+    //               address airline,
+    //               string calldata flightName,
+    //               uint256 takeoffTimestamp
+    //           )
+    //           external
+    //           view
+    //           returns(bool)
+    //           {
+    //
+    //           bytes32 key = keccak256(abi.encodePacked(index, airline, flightName, takeoffTimestamp));
+    //
+    //           return oracleResponses[key].isOpen;
+    //         }
     function getFlightKey
                         (
                             address airline,
@@ -644,22 +663,33 @@ contract FlightSuretyApp {
                              public
                              view
                              requireIsOperational
-                            returns(address[] memory)
-        {
+                             returns(address[] memory)
+      {
          return flightSuretyData.getAirlines();
-        }
+      }
 
-        function getAirlineFunds
+    function getAirlinesFunded
                             (
-                            address airline
                             )
-                             public
-                             view
-                             requireIsOperational
-                             returns(bool)
-        {
-         return flightSuretyData.getAirlineFunds(airline);
-        }
+                            public
+                            view
+                            requireIsOperational
+                            returns(address[] memory)
+      {
+        return flightSuretyData.getFundedAirlines();
+      }
+
+        // function getAirlineFunds
+        //                     (
+        //                     address airline
+        //                     )
+        //                      public
+        //                      view
+        //                      requireIsOperational
+        //                      returns(bool)
+        // {
+        //  return flightSuretyData.getAirlineFunds(airline);
+        // }
 
         function getBalance
                             (
@@ -724,10 +754,11 @@ contract FlightSuretyData {
     function registerAirline(address airline) external returns (bool success);
     function registerFlight(address _airline, string calldata _flightName, uint256 _takeoffTimestamp, string calldata destination, uint256 arrival, uint ticketprice) external returns(bytes32);
     function getFlightStatusCode(bytes32 key) external view returns(uint8);
-    function fund(address airline) public payable;
+    function fund(address airline) public payable returns(bool);
     function buy(address airline, string calldata flight, uint256 timestamp,address passenger, uint256 amount) external payable;
     function creditInsurees(address airline, string calldata flightName, uint256 timestamp,uint factor_numerator,uint factor_denominator) external;
     function getAirlines() external view returns(address[] memory);
+    function getFundedAirlines() external view returns (address[] memory);
     function getAirlineFunds(address airline) external view returns(bool);
     function isnotinsured(address airline,string calldata flight,uint timestamp,address passenger) external view returns(bool);
     function getPassengerFunds(address passenger) external view returns(uint);
