@@ -15,7 +15,10 @@ This repository contains an Ethereum DApp with smart contracts demonstrating the
 - Insurance payouts are not sent directly to passenger’s wallet but they are credited to the passengers and they can withdraw it upon request.
 
 
-Oracle functionality is implemented in the server app. Upon startup, 20+ oracles are registered and their assigned indexes are persisted in memory. Update flight status requests from client Dapp result in OracleRequest event emitted by Smart Contracts that is captured by server app. Server will loop through all registered oracles, identify the oracles with matching indexes for which the OracleRequest event applies, and respond by calling into FlightSuretyApp contract with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50)
+Oracle functionality is implemented in the server app. Upon startup, 20+ oracles are registered and their assigned indexes are persisted in memory. Update flight status requests from client Dapp result in OracleRequest event emitted by Smart Contracts that is captured by server app. Server will loop through all registered oracles, identify the oracles with matching indexes for which the OracleRequest event applies, and respond by calling into FlightSuretyApp contract with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50).
+
+Moreover, separation of concerns is implemented with a FlightSuretyData contract holding the data structures and with a FLightSuretyApp contract holding the logic. DApp is utilized for triggering contract calls. Contracts have multi-party operational status control requiring 50% of airlines in order to change the contracts' status.
+
 
 
 ![truffle test](images/initiate_dapp.png)
